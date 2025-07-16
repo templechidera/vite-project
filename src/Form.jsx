@@ -1,37 +1,52 @@
 import { useState, useEffect } from "react";
 import TodoList from "./List.jsx";
 
+// The Todo component handles creating todos, displaying them
 function Todo({ darkMode, toggleTheme }) {
+  //Track the input field value using useState
   const [todo, setTodo] = useState({ name: "", done: false });
+
+  // Track the list of todos and load them from localStorage if available
   const [todos, setTodos] = useState(() => {
+    // Get todos saved from the browser
     const savedTodos = localStorage.getItem("todos");
     if (savedTodos) {
       console.log("Saved todos from localStorage:", JSON.parse(savedTodos));
-      return JSON.parse(savedTodos);
+      return JSON.parse(savedTodos); // Load them
     } else {
-      return [];
+      return []; //if there is no saved todo start with an empty array
     }
   });
 
+  // useEffect saves the todos array to localStorage every time it changes
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
 
+  // Function to clear all todos
   function handleClearAll() {
     setTodos([]);
     localStorage.removeItem("todos");
   }
 
+  // Function to handle what the user types
   function handleChange(e) {
     setTodo({ name: e.target.value, done: false });
   }
+
+  // Function to handle form submission when the user clicks the Add button
   function handleSubmit(e) {
-    if (todo.name.trim() === "") return;
+    // Prevents the page from reloading after clicking on the add button
+    if (todo.name.trim() === "") return; // Ignore empty input
     e.preventDefault();
-    setTodos([...todos, todo]);
-    setTodo({ name: "", done: false });
+    setTodos([...todos, todo]); // Adds the new todo to the list
+    setTodo({ name: "", done: false }); // Clear input box after adding a new todo
   }
+
+  // Counts how many todos are marked as done
   const markedTodos = todos.filter((todo) => todo.done).length;
+
+  // Counts the total number of todos
   const totalTodos = todos.length;
   return (
     <div className="content">
